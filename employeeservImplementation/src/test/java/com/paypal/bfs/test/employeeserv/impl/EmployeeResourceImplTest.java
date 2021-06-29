@@ -2,12 +2,14 @@ package com.paypal.bfs.test.employeeserv.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -45,7 +47,6 @@ class EmployeeResourceImplTest {
 		
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		String respText = response.getContentAsString();
-		System.out.println(respText);
 		assertThat(respText).contains("2000-05-19");
 	}
 	
@@ -70,8 +71,28 @@ class EmployeeResourceImplTest {
 	}
 
 	@Test
-	void testAddEmployee() {
-		
+	void testAddEmployee() throws Exception {
+		Address address = new Address();
+		address.setLine1("line1");address.setLine2("line2");address.setCity("Pune");
+		address.setState("Maharashtra");address.setCountry("India");address.setZipCode("411048");
+
+		Employee emp = new Employee();
+		emp.setFirstName("First");emp.setLastName("Last");
+		emp.setDateOfBirth("2000-01-10");emp.setAddress(address);
+
+		String empJson = new ObjectMapper().writeValueAsString(emp);
+
+		BDDMockito.given(empService.addEmployee(emp)).willReturn(emp);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.post("/v1/bfs/employees")
+				.accept(MediaType.APPLICATION_JSON).content(empJson)
+				.contentType(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mvc.perform(requestBuilder).andReturn();
+		MockHttpServletResponse response = result.getResponse();
+
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 	}
 
 }

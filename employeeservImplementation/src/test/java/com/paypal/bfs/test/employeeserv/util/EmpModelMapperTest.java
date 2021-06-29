@@ -40,7 +40,7 @@ class EmpModelMapperTest {
 		//then
 		assertThat(empEntity.getFirstName()).isEqualTo(emp.getFirstName());
 		assertThat(empEntity.getLastName()).isEqualTo(emp.getLastName());
-		assertThat(empEntity.getDateOfBirth().equals(LocalDate.of(1981, 4, 5)));
+		assertThat(empEntity.getDateOfBirth()).isEqualTo(LocalDate.of(1981, 4, 5));
 		assertThat(empEntity.getAddress().getCity()).isEqualTo("Pune");
 		
 	}

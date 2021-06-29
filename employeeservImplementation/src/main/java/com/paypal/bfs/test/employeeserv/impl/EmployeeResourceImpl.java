@@ -27,7 +27,7 @@ public class EmployeeResourceImpl implements EmployeeResource {
     @Override
     public ResponseEntity<Employee> employeeGetById(String empId) {
     	Employee emp = empService.getEmpById(empId);
-    	log.info("Employee retreived for {} is {}" , empId, emp);
+    	log.info("Employee found for {} is {}" , empId, emp);
         return new ResponseEntity<>(emp , HttpStatus.OK);
     }
 
@@ -35,6 +35,6 @@ public class EmployeeResourceImpl implements EmployeeResource {
 	public ResponseEntity<Employee> addEmployee(Employee emp) {
 		Employee addedEmp = empService.addEmployee(emp);
 		log.info("New employee added {}" , addedEmp);
-		return new ResponseEntity<>(addedEmp, HttpStatus.OK);
+		return new ResponseEntity<>(addedEmp, HttpStatus.CREATED);
 	}
 }

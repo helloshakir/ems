@@ -1,5 +1,6 @@
 package com.paypal.bfs.test.employeeserv.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
 @Slf4j
@@ -38,7 +37,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			WebRequest request) {
 		log.error("Failed to find the requested resource", resourceNotFoundException);
 		
-		return buildErrorResponse(resourceNotFoundException, resourceNotFoundException.getMessage(), HttpStatus.NOT_FOUND, request);
+		return buildErrorResponse(resourceNotFoundException.getMessage(), HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(InvalidResourceIdentifierException.class)
@@ -47,7 +46,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			WebRequest request) {
 		log.error("Requested resource identifier is not valid", exception);
 		
-		return buildErrorResponse(exception, exception.getMessage(), HttpStatus.BAD_REQUEST, request);
+		return buildErrorResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(ResourceCreationException.class)
@@ -56,7 +55,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			WebRequest request) {
 		log.error("Unable to create resource", exception);
 		
-		return buildErrorResponse(exception, exception.getMessage(), HttpStatus.BAD_REQUEST, request);
+		return buildErrorResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(InputParseException.class)
@@ -65,25 +64,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			WebRequest request) {
 		log.error("Unable to parse input", exception);
 		
-		return buildErrorResponse(exception, exception.getMessage(), HttpStatus.BAD_REQUEST, request);
+		return buildErrorResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponseEntity<Object> handleAllUncaughtException(Exception exception, WebRequest request) {
 		log.error("Unknown error occurred", exception);
-		return buildErrorResponse(exception, "Unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR, request);
+		return buildErrorResponse( "Unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@Override
 	public ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
 			HttpStatus status, WebRequest request) {
 
-		return buildErrorResponse(ex, ex.getMessage(), status, request);
+		return buildErrorResponse(ex.getMessage(), status);
 	}
 
-	private ResponseEntity<Object> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus,
-			WebRequest request) {
+	private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus httpStatus) {
 		ErrorResponse errorResponse = new ErrorResponse(httpStatus.value(), message);
 		
 		return ResponseEntity.status(httpStatus).body(errorResponse);
