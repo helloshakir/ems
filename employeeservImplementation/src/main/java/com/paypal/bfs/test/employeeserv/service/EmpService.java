@@ -50,7 +50,7 @@ public class EmpService implements IEmpService {
 	public Employee addEmployee(Employee emp) {
 		EmployeeEntity empEntity = empModelMapper.toEntity(emp);
 		try {
-			EmployeeEntity existingEmpEntity = empRepository.findByHashId(empEntity.getHashId());
+			EmployeeEntity existingEmpEntity = empRepository.findByUuid(empEntity.getUuid());
 			if (existingEmpEntity == null) {
 				existingEmpEntity = empRepository.save(empEntity);
 			}

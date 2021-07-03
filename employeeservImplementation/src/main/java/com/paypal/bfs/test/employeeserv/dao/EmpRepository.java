@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EmpRepository extends JpaRepository<EmployeeEntity, Integer>{
 	
-	EmployeeEntity findByHashId(Integer hashId);
+	EmployeeEntity findByUuid(String uuid);
 }

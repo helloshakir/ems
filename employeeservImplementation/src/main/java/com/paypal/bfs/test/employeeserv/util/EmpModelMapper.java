@@ -1,5 +1,7 @@
 package com.paypal.bfs.test.employeeserv.util;
 
+import static com.paypal.bfs.test.employeeserv.util.EmpUtil.getUuid;
+
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,7 +33,7 @@ public class EmpModelMapper {
 			empEntity.setAddress(toEntity(emp.getAddress()));
 		}
 		
-		empEntity.setHashId(empEntity.hashCode());
+		empEntity.setUuid(getUuid(empEntity));
 		
 		return empEntity;
 	}
