@@ -19,23 +19,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class EmpService implements IEmpService {
-	
+
 	private final EmpRepository empRepository;
-	
+
 	private final EmpModelMapper empModelMapper;
-	
+
 	@Override
 	public Employee getEmpById(String empId) {
 		Integer employeeId = praseEmpId(empId);
-		
+
 		Optional<EmployeeEntity> empEntity = empRepository.findById(employeeId);
 		log.info("Data retrieved from database - {}", empEntity);
-		
-		if(empEntity.isPresent()) {
+
+		if (empEntity.isPresent()) {
 			return empModelMapper.toBean(empEntity.get());
 		}
-		
-		throw new ResourceNotFoundException("Employee with id " + empId +" does not exist.");
+
+		throw new ResourceNotFoundException("Employee with id " + empId + " does not exist.");
 	}
 
 	private Integer praseEmpId(String empId) {
@@ -50,10 +50,14 @@ public class EmpService implements IEmpService {
 	public Employee addEmployee(Employee emp) {
 		EmployeeEntity empEntity = empModelMapper.toEntity(emp);
 		try {
-			EmployeeEntity addedEmpEntity = empRepository.save(empEntity);
-			return empModelMapper.toBean(addedEmpEntity);
+			EmployeeEntity existingEmpEntity = empRepository.findByHashId(empEntity.getHashId());
+			if (existingEmpEntity == null) {
+				existingEmpEntity = empRepository.save(empEntity);
+			}
+
+			return empModelMapper.toBean(existingEmpEntity);
 		} catch (Exception e) {
-			throw new ResourceCreationException("Unable to add employee. Error:"+ e.getMessage());
+			throw new ResourceCreationException("Unable to add employee. Error:" + e.getMessage());
 		}
 	}
 

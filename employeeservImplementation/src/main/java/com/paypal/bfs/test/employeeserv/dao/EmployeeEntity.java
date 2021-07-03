@@ -1,6 +1,7 @@
 package com.paypal.bfs.test.employeeserv.dao;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -31,9 +32,30 @@ public class EmployeeEntity {
 	private String firstName;
 	private String lastName;
 	private LocalDate dateOfBirth;
+	
+	// alternate id used to handle idempotent post request
+	private Integer hashId;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id", referencedColumnName = "id")
 	private AddressEntity address;
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EmployeeEntity other = (EmployeeEntity) obj;
+		return Objects.equals(address, other.address) && Objects.equals(dateOfBirth, other.dateOfBirth)
+				&& Objects.equals(firstName, other.firstName) && Objects.equals(lastName, other.lastName);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(address, dateOfBirth, firstName, lastName);
+	}
 	
 }

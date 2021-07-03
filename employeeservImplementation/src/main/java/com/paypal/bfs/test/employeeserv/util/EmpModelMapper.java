@@ -5,8 +5,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +27,11 @@ public class EmpModelMapper {
 		EmployeeEntity empEntity = new EmployeeEntity();
 		BeanUtils.copyProperties(emp, empEntity, "dateOfBirth","address");
 		empEntity.setDateOfBirth(dob);
-		if(emp.getAddress() != null) {
+		if(emp.getAddress() != null) {	
 			empEntity.setAddress(toEntity(emp.getAddress()));
 		}
+		
+		empEntity.setHashId(empEntity.hashCode());
 		
 		return empEntity;
 	}
